@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>町のエアコンお掃除専門店＋α エアコンクリーニング予約</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#ea580c; --primary-light:#fed7aa; --primary-pale:#fff7ed; --primary-dark:#c2410c;
+  --mint:#10b981; --cream:#fafaf9; --text:#1c1917; --text-soft:#78716c; --border:#fed7aa;
+  --radius:20px; --radius-sm:12px;
+  --shadow:0 4px 28px rgba(234,88,12,.1); --shadow-lg:0 12px 48px rgba(234,88,12,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+.header{background:linear-gradient(135deg,#ea580c 0%,#fb923c 60%,#fdba74 100%);padding:26px 20px 28px;text-align:center;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(234,88,12,.25);}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(255,255,255,.2) 0%,transparent 60%);}
+.header-store{color:rgba(255,255,255,.95);font-size:12px;font-family:'Zen Maru Gothic',sans-serif;margin-bottom:4px;font-weight:700;position:relative;}
+.header h1{color:#fff;font-size:19px;font-weight:900;font-family:'Zen Maru Gothic',sans-serif;letter-spacing:.03em;line-height:1.35;text-shadow:0 2px 6px rgba(0,0,0,.15);position:relative;}
+.header-sub{color:rgba(255,255,255,.9);font-size:11px;margin-top:6px;position:relative;font-weight:500;}
+
+.steps-bar{display:flex;justify-content:center;align-items:center;background:#fff;padding:12px 16px;border-bottom:2px solid var(--primary-light);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(234,88,12,.08);}
+.step{display:flex;align-items:center;}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#e7e5e4;color:#a8a29e;transition:all .3s;flex-shrink:0;font-family:'Zen Maru Gothic',sans-serif;}
+.step-dot.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(234,88,12,.4);}
+.step-dot.done{background:var(--mint);color:#fff;}
+.step-label{font-size:11px;color:#a8a29e;font-weight:600;margin-left:4px;white-space:nowrap;}
+.step-label.active{color:var(--primary);}
+.step-label.done{color:var(--mint);}
+.step-line{width:20px;height:2px;background:#e7e5e4;margin:0 4px;flex-shrink:0;}
+.step-line.done{background:var(--mint);}
+
+.content{padding:14px;max-width:480px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+
+.card{background:#fff;border-radius:var(--radius);padding:18px 16px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border);animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card-title{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--primary-dark);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+
+.svc-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.svc-tab{flex:1;padding:10px 4px;border-radius:var(--radius-sm);border:2px solid var(--border);background:#fff;text-align:center;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;font-size:12px;font-weight:700;color:var(--text-soft);}
+.svc-tab.active{border-color:var(--primary);background:var(--primary-pale);color:var(--primary-dark);}
+.svc-tab-icon{font-size:18px;display:block;margin-bottom:2px;}
+.svc-panel{display:none;}
+.svc-panel.active{display:block;}
+
+.counter-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--primary-pale);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;border:1px solid var(--primary-light);}
+.counter-label-main{font-size:13px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;}
+.counter-label-sub{font-size:11px;color:var(--primary-dark);font-weight:700;margin-top:2px;}
+.counter-ctrl{display:flex;align-items:center;gap:10px;}
+.c-btn{width:36px;height:36px;border-radius:50%;border:2px solid var(--primary);background:#fff;color:var(--primary-dark);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.c-btn:active{background:var(--primary-light);transform:scale(.92);}
+.c-val{font-size:28px;font-weight:900;min-width:32px;text-align:center;font-family:'Zen Maru Gothic',sans-serif;}
+
+.opt-row{display:flex;align-items:center;padding:12px;background:var(--primary-pale);border-radius:var(--radius-sm);border:1.5px solid transparent;margin-bottom:8px;}
+.opt-row.selected{border-color:var(--primary);background:#ffedd5;}
+.opt-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;margin-right:10px;}
+.opt-row.selected .opt-check{background:var(--primary-dark);border-color:var(--primary-dark);}
+.opt-info{flex:1;cursor:pointer;}
+.opt-name{font-size:13px;font-weight:700;line-height:1.3;}
+.opt-price-hint{font-size:11px;color:var(--text-soft);margin-top:2px;}
+.opt-qty-area{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.oq-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--primary);background:#fff;color:var(--primary-dark);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.oq-btn:active{background:var(--primary-light);}
+.oq-val{font-size:15px;font-weight:700;min-width:18px;text-align:center;}
+.opt-subtotal{font-size:12px;font-weight:700;color:var(--primary-dark);min-width:60px;text-align:right;margin-left:6px;}
+
+.house-item{display:flex;align-items:center;padding:11px 12px;background:var(--primary-pale);border-radius:var(--radius-sm);border:1.5px solid transparent;margin-bottom:8px;cursor:pointer;}
+.house-item.selected{border-color:var(--primary);background:#ffedd5;}
+.house-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;margin-right:10px;}
+.house-item.selected .house-check{background:var(--primary-dark);border-color:var(--primary-dark);}
+.house-price{font-size:12px;font-weight:700;color:var(--primary-dark);white-space:nowrap;margin-left:6px;}
+.house-note{font-size:10px;color:var(--text-soft);margin-top:1px;}
+
+.total-card{background:linear-gradient(135deg,var(--primary-dark) 0%,#fb923c 100%);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-lg);color:#fff;margin-bottom:14px;}
+.total-header{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.total-amount{font-size:42px;font-weight:900;letter-spacing:-1px;line-height:1;font-family:'Zen Maru Gothic',sans-serif;}
+.total-amount small{font-size:18px;font-weight:600;margin-left:4px;}
+.total-tax{font-size:11px;opacity:.85;margin-top:4px;}
+.total-breakdown{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.3);display:flex;flex-direction:column;gap:5px;}
+.bd-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;opacity:.95;}
+.bd-sep{border-top:1px dashed rgba(255,255,255,.3);margin:2px 0;}
+.bd-total{font-weight:700;font-size:14px;padding-top:6px;border-top:1px solid rgba(255,255,255,.35);margin-top:2px;}
+
+.next-btn{width:100%;padding:16px;border-radius:var(--radius-sm);border:none;background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 100%);color:#fff;font-size:15px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(234,88,12,.35);display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
+.next-btn:active{opacity:.9;transform:scale(.98);}
+.next-btn:disabled{background:#d6d3d1;box-shadow:none;cursor:not-allowed;}
+.back-btn{width:100%;padding:13px;border-radius:var(--radius-sm);border:2px solid var(--primary);background:#fff;color:var(--primary-dark);font-size:13px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;margin-bottom:12px;}
+
+.submit-choice-box{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border);display:flex;flex-direction:column;gap:12px;}
+.choice-title{font-size:13px;font-weight:700;text-align:center;font-family:'Zen Maru Gothic',sans-serif;}
+.email-submit-btn{width:100%;padding:14px;border-radius:var(--radius-sm);border:1.5px solid var(--primary);background:var(--primary-pale);color:var(--primary-dark);font-size:14px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
+.email-submit-btn:disabled{opacity:.6;cursor:not-allowed;}
+.submit-subtext{font-size:10px;color:var(--text-soft);text-align:center;line-height:1.4;margin-top:4px;}
+
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;font-weight:700;margin-bottom:5px;display:block;}
+.form-label .req{color:var(--primary-dark);font-size:10px;margin-left:4px;font-weight:700;background:var(--primary-light);padding:2px 4px;border-radius:4px;}
+.form-input,.form-select{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'Noto Sans JP',sans-serif;color:var(--text);background:var(--primary-pale);}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary);background:#fff;}
+.form-input.err,.form-select.err{border-color:#ef4444;background:#fef2f2;}
+.form-textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:'Noto Sans JP',sans-serif;color:var(--text);background:var(--primary-pale);resize:vertical;min-height:80px;}
+.form-hint{font-size:11px;color:var(--text-soft);margin-top:4px;line-height:1.5;}
+.errmsg{font-size:11px;color:#ef4444;font-weight:700;margin-top:4px;display:none;}
+.errmsg.show{display:block;}
+
+.radio-group{display:flex;flex-direction:column;gap:6px;}
+.radio-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--primary-pale);border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;}
+.radio-row.sel{border-color:var(--primary);background:#ffedd5;}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.radio-dot.chk::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary-dark);display:block;}
+.radio-label{font-size:12px;font-weight:700;}
+
+.warn-box{display:none;margin-top:6px;padding:8px 10px;background:#fff5f0;border:1.5px solid #fca5a5;border-radius:8px;font-size:11px;color:#b91c1c;font-weight:700;line-height:1.6;}
+.warn-box.show{display:block;}
+.notice-box{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:var(--radius-sm);padding:10px 12px;font-size:11px;color:#78350f;line-height:1.6;margin-bottom:12px;}
+
+.ac-unit{background:var(--primary-pale);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;border:1.5px solid var(--border);}
+.ac-unit-title{font-size:12px;font-weight:700;color:var(--primary-dark);font-family:'Zen Maru Gothic',sans-serif;margin-bottom:8px;}
+
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--primary-light);font-size:12px;}
+.confirm-row:last-child{border-bottom:none;}
+.confirm-label{color:var(--text-soft);font-weight:600;flex-shrink:0;margin-right:8px;}
+.confirm-value{font-weight:700;text-align:right;}
+.complete-wrap{text-align:center;padding:24px 10px;}
+.complete-icon{font-size:52px;margin-bottom:12px;display:block;}
+.complete-title{font-family:'Zen Maru Gothic',sans-serif;font-size:20px;font-weight:900;color:var(--primary-dark);margin-bottom:6px;}
+.complete-sub{font-size:12px;color:var(--text-soft);line-height:1.7;margin-bottom:20px;}
+.complete-box{background:var(--primary-pale);border:1.5px solid var(--primary-light);border-radius:var(--radius);padding:14px;margin-bottom:16px;text-align:left;}
+.complete-box-title{font-size:12px;font-weight:700;color:var(--primary-dark);margin-bottom:8px;font-family:'Zen Maru Gothic',sans-serif;}
+.restart-btn{width:100%;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--primary);background:#fff;color:var(--primary-dark);font-size:13px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
+
+.date-radio-group{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+.date-radio-row{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--primary-pale);border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;}
+.date-radio-row.sel{border-color:var(--primary);background:#ffedd5;}
+.dow-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;color:var(--text-soft);cursor:pointer;}
+.dow-btn.active{border-color:var(--primary);background:var(--primary);color:#fff;}
+.dow-btn.sun{color:#ef4444;border-color:#fca5a5;}
+.dow-btn.sun.active{background:#ef4444;border-color:#ef4444;color:#fff;}
+.dow-btn.sat{color:#3b82f6;border-color:#93c5fd;}
+.dow-btn.sat.active{background:#3b82f6;border-color:#3b82f6;color:#fff;}
+.site-foot{text-align:center;font-size:10px;color:var(--text-soft);line-height:1.7;padding:6px 0 24px;}
+.site-foot a{color:var(--primary-dark);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-store">町のエアコンお掃除専門店＋α（プラスアルファ）</div>
+  <h1>エアコンクリーニング予約</h1>
+  <div class="header-sub">最短3分 ｜ 概算お見積もり・かんたんWeb予約</div>
+</div>
+
+<div class="steps-bar">
+  <div class="step"><div class="step-dot active" id="dot1">1</div><div class="step-label active" id="lbl1">試算</div></div>
+  <div class="step-line" id="line1"></div>
+  <div class="step"><div class="step-dot" id="dot2">2</div><div class="step-label" id="lbl2">確認</div></div>
+  <div class="step-line" id="line2"></div>
+  <div class="step"><div class="step-dot" id="dot3">3</div><div class="step-label" id="lbl3">情報入力</div></div>
+  <div class="step-line" id="line3"></div>
+  <div class="step"><div class="step-dot" id="dot4">4</div><div class="step-label" id="lbl4">完了</div></div>
+</div>
+
+<div class="content">
+
+<!-- ===== STEP 1 : 試算 ===== -->
+<div class="page active" id="page1">
+  <div class="svc-tabs">
+    <div class="svc-tab active" id="tab-ac" onclick="switchTab('ac')"><span class="svc-tab-icon">❄️</span>エアコン</div>
+    <div class="svc-tab" id="tab-house" onclick="switchTab('house')"><span class="svc-tab-icon">🏠</span>ハウスクリーニング</div>
+  </div>
+
+  <div class="svc-panel active" id="panel-ac">
+    <div class="card">
+      <div class="card-title"><span>❄️</span>家庭用壁掛けエアコンの台数</div>
+      <div class="counter-wrap">
+        <div>
+          <div class="counter-label-main">❄️ エアコン 合計台数</div>
+          <div class="counter-label-sub" id="hintTotal"></div>
+        </div>
+        <div class="counter-ctrl">
+          <button type="button" class="c-btn" onclick="changeCount('total',-1)">－</button>
+          <div class="c-val" id="countTotal">0</div>
+          <button type="button" class="c-btn" onclick="changeCount('total',1)">＋</button>
+        </div>
+      </div>
+
+      <div id="osoujiWrap" style="display:none;">
+        <div class="counter-wrap" style="margin-bottom:0;">
+          <div>
+            <div class="counter-label-main">✨ うちお掃除機能付きは？</div>
+            <div class="counter-label-sub" id="hintOsouji"></div>
+          </div>
+          <div class="counter-ctrl">
+            <button type="button" class="c-btn" onclick="changeCount('osouji',-1)">－</button>
+            <div class="c-val" id="countOsouji">0</div>
+            <button type="button" class="c-btn" onclick="changeCount('osouji',1)">＋</button>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-soft);text-align:center;line-height:1.5;background:var(--primary-pale);border-radius:8px;padding:6px;">
+          ※ お掃除機能付きは通常料金に＋¥6,000/台
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🌿</span>オプション（任意）</div>
+      <div id="optionList"></div>
+    </div>
+  </div>
+
+  <div class="svc-panel" id="panel-house">
+    <div class="card">
+      <div class="card-title"><span>🏠</span>ハウスクリーニング メニュー</div>
+      <div class="notice-box">※ ハウスクリーニングは神奈川県内のみ対応です。金額は広さ・汚れ具合により変動します（表示は目安の最低料金）。</div>
+      <div id="houseList"></div>
+    </div>
+  </div>
+
+  <div class="total-card">
+    <div class="total-header">
+      <span style="font-size:18px;">💰</span>
+      <span style="font-size:13px;font-weight:700;opacity:.95;font-family:'Zen Maru Gothic',sans-serif;">概算お見積もり金額</span>
+    </div>
+    <div class="total-amount" id="totalAmount">¥0<small>円</small></div>
+    <div class="total-tax">税込・出張費込み（対応エリア内）</div>
+    <div class="total-breakdown" id="breakdown"></div>
+  </div>
+
+  <div id="workTimeCard" style="display:none;background:#fff;border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border);">
+    <div style="font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:8px;">⏱️ 作業時間の目安</div>
+    <div id="workTimeContent" style="font-size:12px;line-height:1.8;"></div>
+    <div style="font-size:10px;color:var(--text-soft);margin-top:6px;">※ 汚れの状態や作業環境により前後する場合があります</div>
+  </div>
+
+  <div class="notice-box">💡 こちらは【概算のご参考金額】です。実際の金額は作業前にスタッフがご確認します。追加費用が発生する場合は必ず事前にご説明いたします。</div>
+  <button type="button" class="next-btn" id="nextBtn1" onclick="goToConfirm()" disabled>この内容で進む →</button>
+</div>
+
+<!-- ===== STEP 2 : 確認 ===== -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="card-title"><span>📋</span>お見積もり内容の確認</div>
+    <div id="confirmSummary"></div>
+  </div>
+  <div class="total-card">
+    <div class="total-header">
+      <span style="font-size:18px;">💰</span>
+      <span style="font-size:13px;font-weight:700;opacity:.95;font-family:'Zen Maru Gothic',sans-serif;">概算お見積もり金額</span>
+    </div>
+    <div class="total-amount" id="confirmTotalAmount">¥0<small>円</small></div>
+    <div class="total-tax">税込・出張費込み（対応エリア内）</div>
+  </div>
+  <div id="confirmWorkTimeCard" style="display:none;background:#fff;border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border);">
+    <div style="font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:8px;">⏱️ 作業時間の目安</div>
+    <div id="confirmWorkTimeContent" style="font-size:12px;line-height:1.8;"></div>
+  </div>
+  <button type="button" class="next-btn" onclick="goToPage(3)">この金額でご予約に進む →</button>
+  <button type="button" class="back-btn" onclick="goToPage(1)">← 内容を変更する</button>
+</div>
+
+<!-- ===== STEP 3 : 情報入力 ===== -->
+<div class="page" id="page3">
+
+  <div class="card">
+    <div class="card-title"><span>📝</span>お客様情報</div>
+    <div class="form-group">
+      <label class="form-label">お名前<span class="req">必須</span></label>
+      <input type="text" class="form-input" id="f_name" placeholder="山田 太郎">
+      <div class="errmsg" id="err_name">お名前をご入力ください</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">電話番号<span class="req">必須</span></label>
+      <input type="tel" class="form-input" id="f_tel" placeholder="090-1234-5678">
+      <div class="errmsg" id="err_tel">電話番号をご入力ください</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">メールアドレス<span class="req">必須</span></label>
+      <input type="email" class="form-input" id="f_email" placeholder="example@gmail.com">
+      <div class="errmsg" id="err_email">メールアドレスをご入力ください</div>
+      <div class="form-hint">※ キャリアメール（docomo, au, softbank）は届かない場合があるため、Gmail等のご利用を推奨します。</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">郵便番号<span class="req">必須</span></label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="tel" class="form-input" id="f_zip" placeholder="1234567" maxlength="8" style="flex:1;" oninput="formatZip(this)" onblur="lookupAddress()">
+        <button type="button" onclick="lookupAddress()" style="padding:11px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--primary);background:#fff;color:var(--primary-dark);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">住所検索</button>
+      </div>
+      <div class="errmsg" id="err_zip">郵便番号をご入力ください</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ご住所<span class="req">必須</span></label>
+      <input type="text" class="form-input" id="f_address" placeholder="都道府県・市区町村（自動入力）">
+      <div class="errmsg" id="err_address">ご住所をご入力ください</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">番地・号<span class="req">必須</span></label>
+      <input type="text" class="form-input" id="f_banchi" placeholder="例：1-2-3">
+      <div class="errmsg" id="err_banchi">番地をご入力ください</div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">建物名・部屋番号</label>
+      <input type="text" class="form-input" id="f_building" placeholder="例：〇〇マンション 101号室（一戸建ては不要）">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>👤</span>当日のご対応者について</div>
+    <div class="form-group">
+      <label class="form-label">当日のご対応者<span class="req">必須</span></label>
+      <div class="radio-group">
+        <div class="radio-row" onclick="selectAttendee('self')"><div class="radio-dot" id="radio_attendee_self"></div><span class="radio-label">予約者本人が対応する</span></div>
+        <div class="radio-row" onclick="selectAttendee('other')"><div class="radio-dot" id="radio_attendee_other"></div><span class="radio-label">予約者とは別の方が対応する</span></div>
+      </div>
+      <div class="errmsg" id="err_attendee">当日のご対応者をお選びください</div>
+    </div>
+    <div id="attendee_other_fields" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">当日ご対応者様のお名前<span class="req">必須</span></label>
+        <input type="text" class="form-input" id="f_attendee_name" placeholder="例：山田 花子">
+        <div class="errmsg" id="err_attendee_name">当日ご対応者様のお名前をご入力ください</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">当日連絡が取れる電話番号<span class="req">必須</span></label>
+        <input type="tel" class="form-input" id="f_attendee_tel" placeholder="090-1234-5678">
+        <div class="errmsg" id="err_attendee_tel">当日連絡が取れる電話番号をご入力ください</div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">追加作業・追加料金の確認先<span class="req">必須</span></label>
+        <div class="form-hint" style="margin-bottom:10px;">当日の状態を確認し、必要に応じて追加作業・オプションをご案内する場合がございます。</div>
+        <div class="radio-group">
+          <div class="radio-row" onclick="selectUpsellConfirm('booker')"><div class="radio-dot" id="radio_upsell_booker"></div><span class="radio-label">ご予約者様本人へ確認する</span></div>
+          <div class="radio-row" onclick="selectUpsellConfirm('attendee')"><div class="radio-dot" id="radio_upsell_attendee"></div><span class="radio-label">当日のご対応者様へ確認する</span></div>
+        </div>
+        <div class="errmsg" id="err_upsell_confirm">追加作業・追加料金の確認先をお選びください</div>
+        <div class="form-hint" style="margin-top:10px;">※「ご予約者様本人へ確認する」を選択された場合、ご連絡が取れない際は、確認が必要な追加作業は実施いたしません。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🚗</span>駐車スペースについて</div>
+    <div class="notice-box">
+      🚫 路上駐車はお断りしております。<br>
+      💴 駐車場代はお客様のご負担となります（有料パーキング利用時は実費精算）。
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">駐車スペースの有無<span class="req">必須</span></label>
+      <div class="radio-group">
+        <div class="radio-row" onclick="selectRadio('parking','yes')"><div class="radio-dot" id="radio_parking_yes"></div><span class="radio-label">🅿️ 敷地内に無料駐車スペースあり</span></div>
+        <div class="radio-row" onclick="selectRadio('parking','swap')"><div class="radio-dot" id="radio_parking_swap"></div><span class="radio-label">🔄 自家用車との入れ替えで対応可能</span></div>
+        <div class="radio-row" onclick="selectRadio('parking','paid')"><div class="radio-dot" id="radio_parking_paid"></div><span class="radio-label">💴 近隣コインパーキング利用（実費精算）</span></div>
+        <div class="radio-row" onclick="selectRadio('parking','none')"><div class="radio-dot" id="radio_parking_none"></div><span class="radio-label">❌ 駐車スペースなし・相談したい</span></div>
+      </div>
+      <div class="errmsg" id="err_parking">駐車スペースの状況をお選びください</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📅</span>ご希望の日程（第1〜第3希望）</div>
+    <div id="earliestDateNotice" style="font-size:11px;color:var(--primary-dark);font-weight:700;margin-bottom:10px;background:var(--primary-pale);padding:6px 10px;border-radius:6px;"></div>
+    <div id="dateBlocks"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>✅</span>空き枠のご案内について</div>
+    <div style="background:var(--primary-pale);border-radius:var(--radius-sm);padding:12px;cursor:pointer;border:1.5px solid transparent;" id="cancelSlotRow" onclick="toggleCancelSlot()">
+      <div style="display:flex;align-items:flex-start;gap:8px;">
+        <div style="width:20px;height:20px;border-radius:4px;border:2px solid var(--border);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;" id="cancelSlotCheck"></div>
+        <div>
+          <div style="font-size:12px;font-weight:700;line-height:1.4;">空き枠が出たら連絡希望 ✅</div>
+          <div style="font-size:10px;color:var(--text-soft);margin-top:2px;">キャンセルや直前の空き枠が出た際に、優先してご案内します。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="acInfoSection"></div>
+
+  <div class="card">
+    <div class="card-title"><span>💳</span>お支払い方法</div>
+    <div class="notice-box" style="margin-bottom:10px;">お支払いは作業完了後にお願いいたします。</div>
+    <label class="form-label">お支払い方法<span class="req">必須</span></label>
+    <div class="radio-group">
+      <div class="radio-row" onclick="selectRadio('payment','cash')"><div class="radio-dot" id="radio_payment_cash"></div><span class="radio-label">💴 現金</span></div>
+      <div class="radio-row" onclick="selectRadio('payment','card')"><div class="radio-dot" id="radio_payment_card"></div><span class="radio-label">💳 クレジットカード</span></div>
+      <div class="radio-row" onclick="selectRadio('payment','paypay')"><div class="radio-dot" id="radio_payment_paypay"></div><span class="radio-label">📱 PayPay</span></div>
+    </div>
+    <div class="errmsg" id="err_payment">お支払い方法をお選びください</div>
+    <div class="form-hint">※ ご利用可能な決済方法は担当スタッフよりご案内します。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🔁</span>当店のご利用について</div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">ご利用は何回目ですか？<span class="req">必須</span></label>
+      <div class="radio-group">
+        <div class="radio-row" onclick="selectRadio('visit','first')"><div class="radio-dot" id="radio_visit_first"></div><span class="radio-label">はじめて</span></div>
+        <div class="radio-row" onclick="selectRadio('visit','repeat')"><div class="radio-dot" id="radio_visit_repeat"></div><span class="radio-label">2回目以上</span></div>
+      </div>
+      <div class="errmsg" id="err_visit">ご利用回数をお選びください</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🐾</span>ペットについて</div>
+    <div class="notice-box">🐾 アレルギーのあるスタッフがいる場合がございます。ペットをお飼いの方は必ずご申告ください。</div>
+    <div class="form-group">
+      <label class="form-label">ペットの有無<span class="req">必須</span></label>
+      <div class="radio-group">
+        <div class="radio-row" onclick="selectRadio('pet','none');togglePet(false)"><div class="radio-dot" id="radio_pet_none"></div><span class="radio-label">いない</span></div>
+        <div class="radio-row" onclick="selectRadio('pet','yes');togglePet(true)"><div class="radio-dot" id="radio_pet_yes"></div><span class="radio-label">いる</span></div>
+      </div>
+      <div class="errmsg" id="err_pet">ペットの有無をお選びください</div>
+    </div>
+    <div id="petWrap" style="display:none;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">ペットの種類<span class="req">必須</span></label>
+        <input type="text" class="form-input" id="f_pet" placeholder="例：室内犬（トイプードル）、猫1匹 など">
+        <div class="errmsg" id="err_pet_type">ペットの種類をご入力ください</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>💬</span>ご不明な点・気になる汚れなど</div>
+    <textarea class="form-textarea" id="f_note" placeholder="気になる汚れや設置状況のご不安点などがあればご記入ください"></textarea>
+  </div>
+
+  <div class="submit-choice-box">
+    <div class="choice-title">👇 内容をご確認のうえ、送信してください</div>
+    <div class="errmsg" id="err_summary" style="text-align:center;">入力内容に不足があります。赤く表示された項目をご確認ください。</div>
+    <div>
+      <button type="button" class="email-submit-btn" id="emailSubmitBtn" onclick="submitChoice()">📧 メールで予約リクエストを送信する</button>
+      <div class="submit-subtext">※ メール宛てに受付確認・折り返しご連絡をお送りします</div>
+      <div class="errmsg" id="err_send" style="text-align:center;"></div>
+    </div>
+  </div>
+
+  <button type="button" class="back-btn" onclick="goToPage(2)">← 見積もり内容に戻る</button>
+</div>
+
+<!-- ===== STEP 4 : 完了 ===== -->
+<div class="page" id="page4">
+  <div class="complete-wrap">
+    <span class="complete-icon">🎉</span>
+    <div class="complete-title">予約リクエスト完了！</div>
+    <div class="complete-sub">ご予約ありがとうございます✨<br>担当スタッフよりメールにてご連絡いたします。</div>
+    <div class="complete-box">
+      <div class="complete-box-title">📋 送信いただいたご予約内容</div>
+      <div id="completeSummary"></div>
+    </div>
+    <button type="button" class="restart-btn" onclick="restartAll()">🔄 はじめからやり直す</button>
+  </div>
+</div>
+
+<div class="site-foot">
+  町のエアコンお掃除専門店＋α（プラスアルファ）<br>
+  〒243-0204 神奈川県厚木市鳶尾5-26-41 2階 ／ TEL 070-5080-7830<br>
+  <a href="https://plus-alpha.org/" target="_blank" rel="noopener">https://plus-alpha.org/</a>
+</div>
+
+</div>
+
+<script>
+/* ===== 設定（ここを変えれば料金・文言を調整できます） ===== */
+// 予約の送信先（Google Apps Script ウェブアプリの /exec URL）
+const ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxl075TSfoIhH59suqyUb8_7zUFsNlXDeWZADnTBqWKsjQ4vCrUubGoMZBHr5qmbZw-8g/exec';
+const COMPANY    = '町のエアコンお掃除専門店＋α';
+const LEAD_DAYS  = 2;                           // 何日後から予約可能か
+const LEAD_DAYS_AFTER_15 = 3;                   // 15時以降は何日後からか
+
+const AC_UNIT_PRICE  = 8800;   // 家庭用壁掛けエアコン 1台
+const AC_MULTI_DISC  = 500;    // 2台以上のとき、合計金額から一度だけ割引
+const OSOUJI_EXTRA   = 6000;   // お掃除機能付き 追加
+const KOSHO_FEE      = 3000;   // 吹き出し口2.3m以上
+
+const LOCATIONS = ['リビング','寝室','子供部屋','和室','洗面所','キッチン','その他'];
+const TIME_SLOTS = [
+  ['anytime','いつでも可'],
+  ['9-12','① 9〜12時の間に到着'],
+  ['12-15','② 12〜15時の間に到着'],
+  ['15-18','③ 15〜18時の間に到着']
+];
+
+const AC_OPTIONS = [
+  {id:'gaiki',   name:'室外機清掃',               price:4000, note:'¥4,000 / 台'},
+  {id:'boka',    name:'ナノソル空間抗菌コート',   price:3000, note:'¥3,000 / 台'},
+  {id:'dorain',  name:'ドレンホース洗浄',         price:2500, note:'¥2,500 / 台'},
+  {id:'mushi',   name:'防虫キャップ取付',         price:1000, note:'¥1,000 / 台'},
+  {id:'woman',   name:'女性同行・女性指名（神奈川県のみ）', price:2000, note:'¥2,000', max:1},
+  {id:'umekomi', name:'埋め込みエアコン（4方向タイプ）',   price:24980, note:'¥24,980 / 台（天井吊り下げタイプはご相談ください）'}
+];
+
+const HOUSE_ITEMS = [
+  {id:'h_range',   name:'レンジフード',                     price:18000},
+  {id:'h_water',   name:'水回り',                           price:13000},
+  {id:'h_gas',     name:'ガスコンロ周り',                   price:16800, note:'五徳・魚焼きグリルは除く'},
+  {id:'h_bath',    name:'浴室',                             price:16800},
+  {id:'h_toilet',  name:'トイレ',                           price:8000},
+  {id:'h_wash',    name:'洗面所',                           price:8000}
+];
+
+/* ===== 状態 ===== */
+let totalCount = 0, osoujiCount = 0, optQty = {}, houseSel = {}, acUnits = [];
+const radioState = {};
+let minAllowedDateStr = '';
+const yen = n => '¥' + n.toLocaleString();
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===== 初期化 ===== */
+window.addEventListener('DOMContentLoaded', () => {
+  renderDateBlocks();
+  setupDateLimits();
+  renderAcOptions();
+  renderHouseList();
+  calc();
+});
+
+function renderDateBlocks() {
+  const dows = [['日',0,'sun'],['月',1,''],['火',2,''],['水',3,''],['木',4,''],['金',5,''],['土',6,'sat']];
+  let html = '';
+  [1,2,3].forEach(n => {
+    html += `
+    <div class="form-group">
+      <label class="form-label">第${n}希望日<span class="req">必須</span></label>
+      <div class="date-radio-group" id="drg${n}">
+        <div class="date-radio-row sel" onclick="selectDateMode(${n},'any')"><div class="radio-dot chk" id="dm${n}_any"></div><span class="radio-label">いつでも</span></div>
+        <div class="date-radio-row" onclick="selectDateMode(${n},'dow')"><div class="radio-dot" id="dm${n}_dow"></div><span class="radio-label">曜日指定</span></div>
+        <div class="date-radio-row" onclick="selectDateMode(${n},'date')"><div class="radio-dot" id="dm${n}_date"></div><span class="radio-label">日付指定</span></div>
+      </div>
+      <div id="dow_wrap${n}" style="display:none;margin:8px 0;">
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          ${dows.map(d => `<button type="button" class="dow-btn ${d[2]}" id="dow${n}_${d[1]}" onclick="toggleDowBtn(${n},${d[1]})">${d[0]}</button>`).join('')}
+        </div>
+      </div>
+      <input type="date" class="form-input" id="f_date${n}" style="display:none;margin-top:6px;" onchange="validateDateInput(this)">
+      <div class="errmsg" id="err_date${n}">第${n}希望日をご入力ください</div>
+    </div>
+    <div class="form-group" ${n===3?'style="margin-bottom:0;"':''}>
+      <label class="form-label">第${n}希望 到着時間帯<span class="req">必須</span></label>
+      <select class="form-select" id="f_time${n}">
+        <option value="">選択してください</option>
+        ${TIME_SLOTS.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('')}
+      </select>
+      <div class="errmsg" id="err_time${n}">時間帯を選択してください</div>
+    </div>`;
+  });
+  document.getElementById('dateBlocks').innerHTML = html;
+}
+
+function setupDateLimits() {
+  const now = new Date();
+  const add = now.getHours() >= 15 ? LEAD_DAYS_AFTER_15 : LEAD_DAYS;
+  const d = new Date(); d.setDate(now.getDate() + add);
+  const mm = ('0' + (d.getMonth() + 1)).slice(-2), dd = ('0' + d.getDate()).slice(-2);
+  minAllowedDateStr = d.getFullYear() + '-' + mm + '-' + dd;
+  [1,2,3].forEach(n => { const el = document.getElementById('f_date' + n); if (el) el.min = minAllowedDateStr; });
+  const notice = document.getElementById('earliestDateNotice');
+  if (notice) notice.textContent = '※ 最短ご予約可能日：' + d.getFullYear() + '年' + Number(mm) + '月' + Number(dd) + '日〜';
+}
+
+function validateDateInput(input) {
+  if (!input.value) return;
+  if (input.value < minAllowedDateStr) {
+    alert('⚠️ 直近のご予約は締め切っております。\nご希望日は【 ' + minAllowedDateStr + ' 】以降をご選択ください。');
+    input.value = minAllowedDateStr;
+  }
+}
+
+/* ===== タブ・台数 ===== */
+function switchTab(tab) {
+  ['ac','house'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+// 家庭用壁掛け：1台 8,800円、2台以上は合計金額から500円引き
+function acBaseAmount(n) { return n <= 0 ? 0 : AC_UNIT_PRICE * n - (n >= 2 ? AC_MULTI_DISC : 0); }
+
+function changeCount(type, delta) {
+  if (type === 'total') {
+    totalCount = Math.max(0, Math.min(10, totalCount + delta));
+    document.getElementById('countTotal').textContent = totalCount;
+    if (osoujiCount > totalCount) { osoujiCount = totalCount; document.getElementById('countOsouji').textContent = osoujiCount; }
+    document.getElementById('osoujiWrap').style.display = totalCount > 0 ? 'block' : 'none';
+  } else {
+    osoujiCount = Math.max(0, Math.min(totalCount, osoujiCount + delta));
+    document.getElementById('countOsouji').textContent = osoujiCount;
+  }
+  rebuildAcUnits();
+  calc();
+}
+
+function rebuildAcUnits() {
+  while (acUnits.length < totalCount) acUnits.push({
+    model:'', year:'', location:'', floorMaterial:'', wallMaterial:'', materialConsent:false,
+    workSpace:'', moveOk:'', moveConsent:false, kosho:false
+  });
+  acUnits = acUnits.slice(0, totalCount);
+  const normalN = totalCount - osoujiCount;
+  acUnits.forEach((u, i) => { u.type = i < normalN ? 'normal' : 'osouji'; });
+}
+
+/* ===== オプション・ハウス ===== */
+function changeOpt(id, d) {
+  const opt = AC_OPTIONS.find(o => o.id === id);
+  const max = opt && opt.max ? opt.max : Infinity;
+  optQty[id] = Math.min(max, Math.max(0, (optQty[id] || 0) + d));
+  renderAcOptions(); calc();
+}
+function toggleOpt(id)   { optQty[id] = (optQty[id] || 0) > 0 ? 0 : 1; renderAcOptions(); calc(); }
+function renderAcOptions() {
+  const list = document.getElementById('optionList');
+  list.innerHTML = '';
+  AC_OPTIONS.forEach(opt => {
+    const qty = optQty[opt.id] || 0, on = qty > 0;
+    const row = document.createElement('div');
+    row.className = 'opt-row' + (on ? ' selected' : '');
+    row.innerHTML = `<div class="opt-check">${on ? '✓' : ''}</div>
+      <div class="opt-info" onclick="toggleOpt('${opt.id}')"><div class="opt-name">${opt.name}</div><div class="opt-price-hint">${opt.note}</div></div>
+      <div class="opt-qty-area">
+        <button type="button" class="oq-btn" onclick="changeOpt('${opt.id}',-1)">－</button>
+        <div class="oq-val">${qty}</div>
+        <button type="button" class="oq-btn" onclick="changeOpt('${opt.id}',1)">＋</button>
+      </div>
+      <div class="opt-subtotal">${on ? yen(opt.price * qty) : ''}</div>`;
+    list.appendChild(row);
+  });
+}
+
+function toggleHouse(id) { houseSel[id] = !houseSel[id]; renderHouseList(); calc(); }
+function renderHouseList() {
+  const list = document.getElementById('houseList');
+  list.innerHTML = '';
+  HOUSE_ITEMS.forEach(item => {
+    const on = !!houseSel[item.id];
+    const el = document.createElement('div');
+    el.className = 'house-item' + (on ? ' selected' : '');
+    el.onclick = () => toggleHouse(item.id);
+    el.innerHTML = `<div class="house-check">${on ? '✓' : ''}</div>
+      <div style="flex:1;"><div style="font-size:12px;font-weight:700;">${item.name}</div>${item.note ? '<div class="house-note">' + item.note + '</div>' : ''}</div>
+      <div class="house-price">${yen(item.price)}〜</div>`;
+    list.appendChild(el);
+  });
+}
+
+/* ===== 金額計算 ===== */
+function getBreakdown() {
+  const rows = [];
+  const normalN = totalCount - osoujiCount;
+  if (totalCount > 0) {
+    rows.push({label: '壁掛けエアコン ' + totalCount + '台' + (totalCount > 1 ? '（2台以上 合計-' + yen(AC_MULTI_DISC) + '）' : ''), amount: acBaseAmount(totalCount)});
+  }
+  if (osoujiCount > 0) rows.push({label: 'お掃除機能付き追加 ×' + osoujiCount, amount: OSOUJI_EXTRA * osoujiCount});
+  const kc = acUnits.filter(u => u.kosho).length;
+  if (kc > 0) rows.push({label: '高所作業費（2.3m以上） ×' + kc, amount: KOSHO_FEE * kc});
+  AC_OPTIONS.forEach(o => { const q = optQty[o.id] || 0; if (q > 0) rows.push({label: o.name + ' ×' + q, amount: o.price * q}); });
+  HOUSE_ITEMS.forEach(h => { if (houseSel[h.id]) rows.push({label: h.name + '（〜）', amount: h.price}); });
+  return rows;
+}
+function getTotalAmount() { return getBreakdown().reduce((s, r) => s + r.amount, 0); }
+
+function calc() {
+  const rows = getBreakdown(), total = getTotalAmount();
+  document.getElementById('hintTotal').textContent = totalCount > 0 ? '計 ' + yen(acBaseAmount(totalCount)) : '';
+  document.getElementById('hintOsouji').textContent = osoujiCount > 0 ? '＋' + yen(OSOUJI_EXTRA) + '/台' : '';
+  document.getElementById('totalAmount').innerHTML = yen(total) + '<small>円</small>';
+  let html = rows.map(r => `<div class="bd-row"><span>${r.label}</span><span>${yen(r.amount)}</span></div>`).join('');
+  if (rows.length) html += `<div class="bd-sep"></div><div class="bd-row bd-total"><span>合計</span><span>${yen(total)}</span></div>`;
+  document.getElementById('breakdown').innerHTML = html;
+  document.getElementById('nextBtn1').disabled = !(totalCount > 0 || (optQty.umekomi || 0) > 0 || Object.values(houseSel).some(Boolean));
+  calcWorkTime();
+}
+
+// 作業時間の目安：通常 1〜1.5時間/台、お掃除機能付き 約2〜2時間10分/台
+function workTimeInfo() {
+  if (totalCount <= 0) return null;
+  const nN = totalCount - osoujiCount;
+  const min = nN * 60 + osoujiCount * 120, max = nN * 90 + osoujiCount * 130;
+  const fmt = m => m >= 60 ? Math.floor(m / 60) + '時間' + (m % 60 ? (m % 60) + '分' : '') : m + '分';
+  const lines = [];
+  if (nN > 0) lines.push('通常タイプ ' + nN + '台：' + fmt(nN * 60) + '〜' + fmt(nN * 90));
+  if (osoujiCount > 0) lines.push('お掃除機能付き ' + osoujiCount + '台：' + fmt(osoujiCount * 120) + '〜' + fmt(osoujiCount * 130));
+  return {lines, total: fmt(min) + '〜' + fmt(max)};
+}
+function workTimeHtml(info) {
+  return info.lines.map(l => '<div><span style="color:var(--primary);">▷</span> ' + l + '</div>').join('') +
+    '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-weight:700;font-size:13px;color:var(--primary-dark);">合計目安：約 ' + info.total + '</div>';
+}
+function calcWorkTime() {
+  const card = document.getElementById('workTimeCard'), info = workTimeInfo();
+  if (!info) { card.style.display = 'none'; return; }
+  document.getElementById('workTimeContent').innerHTML = workTimeHtml(info);
+  card.style.display = 'block';
+}
+
+/* ===== ページ遷移 ===== */
+function goToConfirm() {
+  buildConfirmSummary();
+  const info = workTimeInfo(), card = document.getElementById('confirmWorkTimeCard');
+  if (info) { document.getElementById('confirmWorkTimeContent').innerHTML = workTimeHtml(info); card.style.display = 'block'; }
+  else card.style.display = 'none';
+  goToPage(2);
+}
+function goToPage(n) {
+  document.querySelectorAll('.page').forEach((p, i) => p.classList.toggle('active', i === n - 1));
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('dot' + i), lbl = document.getElementById('lbl' + i), line = document.getElementById('line' + i);
+    const st = i < n ? 'done' : i === n ? 'active' : '';
+    dot.className = 'step-dot ' + st; lbl.className = 'step-label ' + st;
+    if (line) line.className = 'step-line' + (i < n ? ' done' : '');
+  }
+  if (n === 3) renderAcInfoSection();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function buildConfirmSummary() {
+  document.getElementById('confirmSummary').innerHTML = getBreakdown().map(r =>
+    `<div class="confirm-row"><span class="confirm-label">${r.label}</span><span class="confirm-value">${yen(r.amount)}</span></div>`).join('');
+  document.getElementById('confirmTotalAmount').innerHTML = yen(getTotalAmount()) + '<small>円</small>';
+}
+
+/* ===== エアコン詳細入力（ステップ3） ===== */
+const RISKY_WALLS = ['土壁','漆喰','塗り壁','珪藻土'];
+function sel(options, current) {
+  return '<option value="">選択してください</option>' + options.map(o => `<option value="${o}" ${current === o ? 'selected' : ''}>${o}</option>`).join('');
+}
+function isRisky(u) { return u.floorMaterial === '無垢材' || RISKY_WALLS.includes(u.wallMaterial); }
+
+function renderAcInfoSection() {
+  const sec = document.getElementById('acInfoSection');
+  if (!acUnits.length) { sec.innerHTML = ''; return; }
+  let html = '<div class="card"><div class="card-title"><span>❄️</span>エアコン詳細情報</div>';
+  acUnits.forEach((u, i) => {
+    html += `<div class="ac-unit">
+      <div class="ac-unit-title">${u.type === 'normal' ? '🌬️ 通常タイプ' : '✨ お掃除機能付き'} ${i + 1}台目</div>
+      <div class="form-group">
+        <label class="form-label">設置場所 <span style="color:#e53935;">※必須</span></label>
+        <select class="form-select" id="ac_loc_${i}" onchange="acUnits[${i}].location=this.value;acClr(this,'ac_err_${i}_loc')">${sel(LOCATIONS, u.location)}</select>
+        <div class="errmsg" id="ac_err_${i}_loc">${i + 1}台目の設置場所を選択してください</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">床材 <span style="color:#e53935;">※必須</span></label>
+        <select class="form-select" id="ac_floor_${i}" onchange="setMaterial(${i},'floorMaterial',this.value);acClr(this,'ac_err_${i}_floor')">${sel(['一般的なフローリング','無垢材','畳','カーペット','その他・不明'], u.floorMaterial)}</select>
+        <div class="errmsg" id="ac_err_${i}_floor">${i + 1}台目の床材を選択してください</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">壁材</label>
+        <select class="form-select" onchange="setMaterial(${i},'wallMaterial',this.value)">${sel(['一般的な壁紙（クロス）','珪藻土','漆喰','塗り壁','土壁','その他・不明'], u.wallMaterial)}</select>
+      </div>
+      <div id="material_warn_${i}"></div>
+      <div class="form-group">
+        <label class="form-label">エアコン下の作業スペース <span style="color:#e53935;">※必須</span></label>
+        <select class="form-select" id="ac_space_${i}" onchange="setWorkSpace(${i},this.value);acClr(this,'ac_err_${i}_space')">${sel(['十分な作業スペースがある','ベッド・寝具がある','家具・家電・荷物などがある'], u.workSpace)}</select>
+        <div class="errmsg" id="ac_err_${i}_space">${i + 1}台目の作業スペースを選択してください</div>
+      </div>
+      <div id="workspace_detail_${i}"></div>
+      <div class="form-group">
+        <label class="form-label">型番（半角）</label>
+        <input type="text" class="form-input" value="${esc(u.model)}" placeholder="例：MSZ-GV2523" style="font-family:monospace;" oninput="acUnits[${i}].model=this.value">
+        <div class="form-hint">本体のラベル（シール）に記載されています</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">製造年（西暦4桁）</label>
+        <input type="number" class="form-input" value="${esc(u.year)}" placeholder="例：2020" min="1990" max="2030" oninput="acUnits[${i}].year=this.value;checkYear(${i},this.value)">
+        <div class="form-hint">製造から18年以上経過した機種は対応できない場合があります</div>
+        <div class="warn-box" id="year_warn_${i}">⚠️ 製造から18年以上経過しているため、対応できない場合があります。ご予約後にスタッフよりご連絡します。</div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">床からエアコン吹き出し口までの高さ</label>
+        <div class="radio-group">
+          <div class="radio-row ${!u.kosho ? 'sel' : ''}" id="kosho_no_${i}" onclick="setKosho(${i},false)"><div class="radio-dot ${!u.kosho ? 'chk' : ''}"></div><span class="radio-label">2.3m未満（標準）</span></div>
+          <div class="radio-row ${u.kosho ? 'sel' : ''}" id="kosho_yes_${i}" onclick="setKosho(${i},true)"><div class="radio-dot ${u.kosho ? 'chk' : ''}"></div><span class="radio-label">2.3m以上 → 高所作業費 ＋${yen(KOSHO_FEE)}</span></div>
+        </div>
+        <div class="form-hint">※ 専用の脚立が必要となるため、事前のご連絡をお願いします。</div>
+      </div>
+    </div>`;
+  });
+  sec.innerHTML = html + '</div>';
+  acUnits.forEach((u, i) => { updateMaterialWarning(i); updateWorkSpaceDetail(i); checkYear(i, u.year); });
+}
+
+function setMaterial(i, key, value) {
+  acUnits[i][key] = value;
+  if (!isRisky(acUnits[i])) acUnits[i].materialConsent = false;
+  updateMaterialWarning(i);
+}
+function updateMaterialWarning(i) {
+  const box = document.getElementById('material_warn_' + i); if (!box) return;
+  const u = acUnits[i];
+  if (!isRisky(u)) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="warn-box" style="display:block;margin:10px 0;">
+    <strong>⚠️ 床材・壁材についての重要事項</strong><br><br>
+    土壁・漆喰・塗り壁・無垢材の壁や床は、水分や洗剤の影響でシミ・変色・剥がれ等が生じるおそれがあるため、<strong>原則として作業をお断りしております</strong>。<br>
+    状況により作業可能な場合もございますので、ご予約後にスタッフよりご連絡いたします。
+    <label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-weight:700;">
+      <input type="checkbox" id="ac_materialconsent_${i}" ${u.materialConsent ? 'checked' : ''} onchange="acUnits[${i}].materialConsent=this.checked;acClr(null,'ac_err_${i}_material')" style="margin-top:4px;">
+      <span>上記を確認し、スタッフからの確認連絡を了承します</span>
+    </label>
+    <div class="errmsg" id="ac_err_${i}_material">${i + 1}台目：上記の内容を確認し、チェックを入れてください</div></div>`;
+}
+
+function setWorkSpace(i, value) {
+  acUnits[i].workSpace = value;
+  acUnits[i].moveOk = ''; acUnits[i].moveConsent = false;
+  updateWorkSpaceDetail(i);
+}
+function updateWorkSpaceDetail(i) {
+  const box = document.getElementById('workspace_detail_' + i); if (!box) return;
+  const u = acUnits[i];
+  if (!u.workSpace || u.workSpace === '十分な作業スペースがある') { box.innerHTML = ''; return; }
+  const what = u.workSpace === 'ベッド・寝具がある' ? '寝具・マットレス・すのこ' : '家具・家電・荷物';
+  box.innerHTML = `<div class="warn-box" style="display:block;margin:10px 0;">
+    <strong>${u.workSpace === 'ベッド・寝具がある' ? '🛏️' : '🪑'} ${what}がある場合</strong><br><br>
+    作業前までに${what}の移動をお願いいたします。<br><br>
+    <label class="form-label">移動できますか？ <span style="color:#e53935;">※必須</span></label>
+    <select class="form-select" id="ac_move_${i}" onchange="setMoveOk(${i},this.value);acClr(this,'ac_err_${i}_move')">${sel(['移動できる','移動できない'], u.moveOk)}</select>
+    <div class="errmsg" id="ac_err_${i}_move">${i + 1}台目：移動できるかどうかを選択してください</div>
+    <div id="move_consent_${i}"></div>
+    <div style="margin-top:12px;">📷 予約受付後にご連絡しますので、お名前・ご住所とあわせて、エアコンから床までの全体と作業スペースが分かるお写真を2〜3枚程度お送りください。</div>
+  </div>`;
+  updateMoveConsent(i);
+}
+function setMoveOk(i, v) { acUnits[i].moveOk = v; if (v !== '移動できない') acUnits[i].moveConsent = false; updateMoveConsent(i); }
+function updateMoveConsent(i) {
+  const box = document.getElementById('move_consent_' + i); if (!box) return;
+  const u = acUnits[i];
+  if (u.moveOk !== '移動できない') { box.innerHTML = ''; return; }
+  box.innerHTML = `<div style="margin-top:12px;"><strong style="color:#c62828;">⚠️ 作業についての重要事項</strong><br><br>
+    移動できない状態で施工する場合、十分に養生を行いますが、水濡れ・汚損等のリスクが高まります。また、作業スペースを確保できない場合は、当日の状況により施工できない場合があります。
+    <label style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-weight:700;">
+      <input type="checkbox" id="ac_moveconsent_${i}" ${u.moveConsent ? 'checked' : ''} onchange="acUnits[${i}].moveConsent=this.checked;acClr(null,'ac_err_${i}_moveconsent')" style="margin-top:4px;">
+      <span>上記を確認し、同意します</span>
+    </label>
+    <div class="errmsg" id="ac_err_${i}_moveconsent">${i + 1}台目：上記の内容に同意のチェックを入れてください</div></div>`;
+}
+
+// 入力エラー表示を解除（el は赤枠を外す対象。チェックボックスは null）
+function acClr(el, errId) {
+  if (el) el.classList.remove('err');
+  document.getElementById(errId)?.classList.remove('show');
+}
+
+function setKosho(i, v) {
+  acUnits[i].kosho = v;
+  [['no', false], ['yes', true]].forEach(([k, on]) => {
+    const row = document.getElementById('kosho_' + k + '_' + i);
+    if (!row) return;
+    row.classList.toggle('sel', v === on);
+    row.querySelector('.radio-dot').classList.toggle('chk', v === on);
+  });
+  calc();
+}
+function checkYear(i, val) {
+  const w = document.getElementById('year_warn_' + i); if (!w) return;
+  const y = parseInt(val, 10), age = new Date().getFullYear() - y;
+  w.classList.toggle('show', String(val).length >= 4 && !isNaN(y) && age >= 18);
+}
+
+/* ===== ラジオ・チェック類 ===== */
+function selectRadio(group, val) {
+  radioState[group] = val;
+  document.querySelectorAll('[id^="radio_' + group + '_"]').forEach(el => { el.classList.remove('chk'); el.closest('.radio-row')?.classList.remove('sel'); });
+  const dot = document.getElementById('radio_' + group + '_' + val);
+  if (dot) { dot.classList.add('chk'); dot.closest('.radio-row')?.classList.add('sel'); }
+}
+function selectAttendee(val) {
+  selectRadio('attendee', val);
+  document.getElementById('attendee_other_fields').style.display = val === 'other' ? 'block' : 'none';
+  if (val === 'self') {
+    document.getElementById('f_attendee_name').value = '';
+    document.getElementById('f_attendee_tel').value = '';
+    radioState.upsell = null;
+    document.querySelectorAll('[id^="radio_upsell_"]').forEach(el => { el.classList.remove('chk'); el.closest('.radio-row')?.classList.remove('sel'); });
+  }
+}
+function selectUpsellConfirm(val) { selectRadio('upsell', val); }
+function togglePet(show) {
+  document.getElementById('petWrap').style.display = show ? 'block' : 'none';
+  if (!show) document.getElementById('f_pet').value = '';
+}
+
+const dateMode = {1:'any', 2:'any', 3:'any'};
+const dowState = {1:{}, 2:{}, 3:{}};
+function selectDateMode(n, mode) {
+  dateMode[n] = mode;
+  ['any','dow','date'].forEach((m, idx) => {
+    document.querySelector(`#drg${n} .date-radio-row:nth-child(${idx + 1})`)?.classList.toggle('sel', m === mode);
+    document.getElementById(`dm${n}_${m}`)?.classList.toggle('chk', m === mode);
+  });
+  document.getElementById('dow_wrap' + n).style.display = mode === 'dow' ? 'block' : 'none';
+  const dateEl = document.getElementById('f_date' + n);
+  dateEl.style.display = mode === 'date' ? 'block' : 'none';
+  if (mode !== 'date') dateEl.value = '';
+}
+function toggleDowBtn(n, day) {
+  dowState[n][day] = !dowState[n][day];
+  document.getElementById('dow' + n + '_' + day).classList.toggle('active', dowState[n][day]);
+}
+function getDowValue(n) {
+  const mode = dateMode[n];
+  if (mode === 'any') return 'いつでも可';
+  if (mode === 'dow') {
+    const labels = ['日','月','火','水','木','金','土'];
+    const s = Object.entries(dowState[n]).filter(([, v]) => v).map(([k]) => labels[k] + '曜');
+    return s.length ? s.join('・') : 'いつでも可';
+  }
+  return document.getElementById('f_date' + n).value || '';
+}
+
+let cancelSlotChecked = false;
+function toggleCancelSlot() {
+  cancelSlotChecked = !cancelSlotChecked;
+  const row = document.getElementById('cancelSlotRow'), check = document.getElementById('cancelSlotCheck');
+  row.style.borderColor = cancelSlotChecked ? 'var(--primary)' : 'transparent';
+  row.style.background = cancelSlotChecked ? '#ffedd5' : 'var(--primary-pale)';
+  check.textContent = cancelSlotChecked ? '✓' : '';
+  check.style.background = cancelSlotChecked ? 'var(--primary-dark)' : '#fff';
+  check.style.borderColor = cancelSlotChecked ? 'var(--primary-dark)' : 'var(--border)';
+}
+
+/* ===== 住所検索 ===== */
+function formatZip(el) { el.value = el.value.replace(/[^\d]/g, '').slice(0, 7); }
+function lookupAddress() {
+  const zip = document.getElementById('f_zip').value.replace(/[^\d]/g, '');
+  if (zip.length !== 7) return;
+  fetch('https://zipcloud.ibsnet.co.jp/api/search?zipcode=' + zip)
+    .then(r => r.json())
+    .then(j => {
+      if (j.results && j.results.length) {
+        const r = j.results[0];
+        document.getElementById('f_address').value = r.address1 + r.address2 + r.address3;
+        document.getElementById('f_banchi').focus();
+      } else alert('住所が見つかりませんでした。郵便番号をご確認ください。');
+    })
+    .catch(() => alert('住所検索に失敗しました。手動でご入力ください。'));
+}
+
+/* ===== バリデーション ===== */
+// 入力エラーの項目を集め、画面上で一番上にある項目までスクロールする
+let errTargets = [];
+function markErr(el) { if (el) errTargets.push(el); }
+function flag(id, errId, bad) {
+  const el = document.getElementById(id), em = document.getElementById(errId);
+  el?.classList.toggle('err', bad);
+  em?.classList.toggle('show', bad);
+  if (bad) markErr(el || em);
+  return !bad;
+}
+function flagGroup(errId, bad) {
+  const em = document.getElementById(errId);
+  em?.classList.toggle('show', bad);
+  if (bad) markErr(em);
+  return !bad;
+}
+function flagSelect(id, errId, bad) {
+  const el = document.getElementById(id), em = document.getElementById(errId);
+  el?.classList.toggle('err', bad);
+  em?.classList.toggle('show', bad);
+  if (bad) markErr(el);
+  return !bad;
+}
+function flagCheck(id, errId, bad) {
+  const em = document.getElementById(errId);
+  em?.classList.toggle('show', bad);
+  if (bad) markErr(document.getElementById(id) || em);
+  return !bad;
+}
+
+function validateForm() {
+  errTargets = [];
+  const val = id => document.getElementById(id).value.trim();
+
+  [['f_name','err_name'],['f_tel','err_tel'],['f_email','err_email'],['f_zip','err_zip'],['f_address','err_address'],['f_banchi','err_banchi']]
+    .forEach(([id, e]) => flag(id, e, !val(id)));
+
+  flagGroup('err_attendee', !radioState.attendee);
+  if (radioState.attendee === 'other') {
+    flag('f_attendee_name', 'err_attendee_name', !val('f_attendee_name'));
+    flag('f_attendee_tel', 'err_attendee_tel', !val('f_attendee_tel'));
+    flagGroup('err_upsell_confirm', !radioState.upsell);
+  }
+
+  flagGroup('err_parking', !radioState.parking);
+
+  [1,2,3].forEach(n => {
+    flag('f_date' + n, 'err_date' + n, dateMode[n] === 'date' && !document.getElementById('f_date' + n).value);
+    flagSelect('f_time' + n, 'err_time' + n, !document.getElementById('f_time' + n).value);
+  });
+
+  // エアコン詳細（他の項目と同時にチェック）
+  acUnits.forEach((u, i) => {
+    flagSelect('ac_loc_' + i, 'ac_err_' + i + '_loc', !u.location);
+    flagSelect('ac_floor_' + i, 'ac_err_' + i + '_floor', !u.floorMaterial);
+    flagSelect('ac_space_' + i, 'ac_err_' + i + '_space', !u.workSpace);
+    flagCheck('ac_materialconsent_' + i, 'ac_err_' + i + '_material', isRisky(u) && !u.materialConsent);
+    if (u.workSpace && u.workSpace !== '十分な作業スペースがある') {
+      flagSelect('ac_move_' + i, 'ac_err_' + i + '_move', !u.moveOk);
+      flagCheck('ac_moveconsent_' + i, 'ac_err_' + i + '_moveconsent', u.moveOk === '移動できない' && !u.moveConsent);
+    }
+  });
+
+  flagGroup('err_payment', !radioState.payment);
+  flagGroup('err_visit', !radioState.visit);
+  flagGroup('err_pet', !radioState.pet);
+  if (radioState.pet === 'yes') flag('f_pet', 'err_pet_type', !val('f_pet'));
+
+  const summary = document.getElementById('err_summary');
+  if (summary) summary.classList.toggle('show', errTargets.length > 0);
+  if (!errTargets.length) return true;
+
+  // 画面上で最も上にある項目を探してスクロール
+  const top = el => el.getBoundingClientRect().top + window.scrollY;
+  const first = errTargets.reduce((a, b) => top(b) < top(a) ? b : a);
+  first.scrollIntoView({behavior: 'smooth', block: 'center'});
+  if (/^(INPUT|SELECT|TEXTAREA)$/.test(first.tagName) && first.type !== 'checkbox') {
+    try { first.focus({preventScroll: true}); } catch (e) {}
+  }
+  return false;
+}
+
+/* ===== 送信 ===== */
+function getPayload() {
+  const tmap = Object.fromEntries(TIME_SLOTS.map(t => [t[0], t[1].replace(/^[①②③]\s*/, '')]));
+  const pmap = {cash:'現金', card:'クレジットカード', paypay:'PayPay'};
+  const parkMap = {yes:'敷地内無料駐車あり', swap:'自家用車と入れ替え可', paid:'近隣コインパーキング利用', none:'なし・相談'};
+  const v = id => document.getElementById(id).value.trim();
+  const other = radioState.attendee === 'other';
+  return {
+    name: v('f_name'), tel: v('f_tel'), email: v('f_email'), zip: v('f_zip'),
+    address: v('f_address') + ' ' + v('f_banchi'), building: v('f_building'),
+    attendeeType: other ? '予約者とは別の方' : '予約者本人',
+    attendeeName: other ? v('f_attendee_name') : '',
+    attendeeTel: other ? v('f_attendee_tel') : '',
+    upsellConfirm: other ? (radioState.upsell === 'booker' ? '予約者本人へ確認' : '当日の対応者へ確認') : '',
+    date1: getDowValue(1), time1: tmap[v('f_time1')] || '',
+    date2: getDowValue(2), time2: tmap[v('f_time2')] || '',
+    date3: getDowValue(3), time3: tmap[v('f_time3')] || '',
+    acUnits: acUnits.map((u, i) => ({
+      no: i + 1, type: u.type === 'normal' ? '通常' : 'お掃除機能付き', location: u.location,
+      floorMaterial: u.floorMaterial, wallMaterial: u.wallMaterial, materialConsent: !!u.materialConsent,
+      workSpace: u.workSpace, moveOk: u.moveOk, moveConsent: !!u.moveConsent,
+      model: u.model, year: u.year, kosho: !!u.kosho
+    })),
+    acOptions: AC_OPTIONS.filter(o => (optQty[o.id] || 0) > 0).map(o => o.name + '×' + optQty[o.id]).join('、') || 'なし',
+    houseItems: HOUSE_ITEMS.filter(h => houseSel[h.id]).map(h => h.name).join('、') || 'なし',
+    payment: pmap[radioState.payment] || '未選択',
+    parking: parkMap[radioState.parking] || '',
+    pet: radioState.pet === 'yes' ? 'あり（' + v('f_pet') + '）' : 'なし',
+    visitCount: radioState.visit === 'first' ? 'はじめて' : '2回目以上',
+    cancelSlot: cancelSlotChecked ? '希望する' : '希望しない',
+    note: v('f_note'),
+    estimate: getTotalAmount(),
+    submitted: new Date().toLocaleString('ja-JP')
+  };
+}
+
+function submitChoice() {
+  if (!validateForm()) return;   // エラー項目までのスクロールは validateForm 内で行う
+  const payload = getPayload();
+  payload.sendVia = 'メール';
+  submitByEmail(payload);
+}
+// 予約内容を Apps Script（ENDPOINT_URL）へ送信する
+function submitByEmail(payload) {
+  const btn = document.getElementById('emailSubmitBtn');
+  const errEl = document.getElementById('err_send');
+  const fail = msg => {
+    btn.disabled = false; btn.textContent = '📧 メールで予約リクエストを送信する';
+    errEl.textContent = msg; errEl.classList.add('show');
+    errEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+  };
+  errEl.classList.remove('show');
+  if (!ENDPOINT_URL) { fail('送信先が未設定のため、送信できません。お手数ですがお電話（070-5080-7830）でご連絡ください。'); return; }
+  btn.disabled = true; btn.textContent = '送信中…';
+  // text/plain で送る（Apps Script はプリフライトに応答できないため）
+  fetch(ENDPOINT_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res && res.status === 'ok') {
+        btn.disabled = false; btn.textContent = '📧 メールで予約リクエストを送信する';
+        showComplete(payload);
+      } else fail('送信に失敗しました。時間をおいて再度お試しいただくか、お電話（070-5080-7830）でご連絡ください。');
+    })
+    .catch(() => fail('通信エラーで送信できませんでした。電波状況をご確認のうえ再度お試しいただくか、お電話（070-5080-7830）でご連絡ください。'));
+}
+
+function showComplete(d) {
+  const row = (l, v) => `<div class="confirm-row"><span class="confirm-label">${l}</span><span class="confirm-value">${esc(v)}</span></div>`;
+  let rows = row('お名前', d.name + ' 様') + row('電話番号', d.tel) + row('ご訪問先ご住所', d.address + (d.building ? ' ' + d.building : ''));
+  if (d.attendeeType === '予約者とは別の方') {
+    rows += row('当日の対応者', '予約者とは別の方') + row('対応者名', d.attendeeName + ' 様') + row('対応者電話番号', d.attendeeTel) + row('追加作業等の確認先', d.upsellConfirm);
+  } else rows += row('当日の対応者', '予約者本人');
+  if (d.acUnits.length) rows += row('エアコン', d.acUnits.map(u => u.type + '（' + u.location + '）').join('、'));
+  if (d.acOptions !== 'なし') rows += row('オプション', d.acOptions);
+  if (d.houseItems !== 'なし') rows += row('ハウス', d.houseItems);
+  rows += row('第1希望', d.date1 + ' ' + d.time1) + row('第2希望', d.date2 + ' ' + d.time2) + row('第3希望', d.date3 + ' ' + d.time3);
+  rows += row('お支払い', d.payment) + row('概算金額', yen(d.estimate));
+  document.getElementById('completeSummary').innerHTML = rows;
+  goToPage(4);
+}
+
+function restartAll() { location.reload(); }
+</script>
+</body>
+</html>
