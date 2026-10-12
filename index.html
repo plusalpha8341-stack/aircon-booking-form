@@ -302,9 +302,18 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
       <input type="text" class="form-input" id="f_banchi" placeholder="例：1-2-3">
       <div class="errmsg" id="err_banchi">番地をご入力ください</div>
     </div>
-    <div class="form-group" style="margin-bottom:0;">
+    <div class="form-group">
       <label class="form-label">建物名・部屋番号</label>
       <input type="text" class="form-input" id="f_building" placeholder="例：〇〇マンション 101号室（一戸建ては不要）">
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">お住まいのタイプ<span class="req">必須</span></label>
+      <div class="radio-group">
+        <div class="radio-row" onclick="selectRadio('housing','house')"><div class="radio-dot" id="radio_housing_house"></div><span class="radio-label">戸建て</span></div>
+        <div class="radio-row" onclick="selectRadio('housing','apartment')"><div class="radio-dot" id="radio_housing_apartment"></div><span class="radio-label">マンション・アパート</span></div>
+        <div class="radio-row" onclick="selectRadio('housing','other')"><div class="radio-dot" id="radio_housing_other"></div><span class="radio-label">その他</span></div>
+      </div>
+      <div class="errmsg" id="err_housing">お住まいのタイプをお選びください</div>
     </div>
   </div>
 
@@ -431,6 +440,12 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
     <textarea class="form-textarea" id="f_note" placeholder="気になる汚れや設置状況のご不安点などがあればご記入ください"></textarea>
   </div>
 
+  <div class="card">
+    <div class="card-title"><span>🎁</span>ご紹介コード（お持ちの方のみ）</div>
+    <input type="text" class="form-input" id="f_referral" placeholder="例：R1012-007" autocapitalize="characters" maxlength="20">
+    <div class="form-hint">ご紹介者様の受付番号をご入力ください（任意）</div>
+  </div>
+
   <div class="submit-choice-box">
     <div class="choice-title">👇 内容をご確認のうえ、送信してください</div>
     <div class="errmsg" id="err_summary" style="text-align:center;">入力内容に不足があります。赤く表示された項目をご確認ください。</div>
@@ -450,6 +465,11 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--t
     <span class="complete-icon">🎉</span>
     <div class="complete-title">予約リクエスト完了！</div>
     <div class="complete-sub">ご予約ありがとうございます✨<br>担当スタッフよりメールにてご連絡いたします。</div>
+    <div class="complete-box" id="receiptBox" style="display:none;text-align:center;">
+      <div class="complete-box-title" style="margin-bottom:4px;">🧾 受付番号</div>
+      <div id="receiptNo" style="font-family:'Zen Maru Gothic',sans-serif;font-size:24px;font-weight:900;color:var(--primary-dark);letter-spacing:.04em;"></div>
+      <div style="font-size:11px;color:var(--text-soft);margin-top:4px;line-height:1.6;">お問い合わせの際は、この受付番号をお伝えください。<br>同じ番号を確認メールにも記載しています。</div>
+    </div>
     <div class="complete-box">
       <div class="complete-box-title">📋 送信いただいたご予約内容</div>
       <div id="completeSummary"></div>
@@ -926,6 +946,7 @@ function toggleCancelSlot() {
 
 /* ===== 住所検索 ===== */
 function formatZip(el) { el.value = el.value.replace(/[^\d]/g, '').slice(0, 7); }
+let lookedUpArea = '';
 function lookupAddress() {
   const zip = document.getElementById('f_zip').value.replace(/[^\d]/g, '');
   if (zip.length !== 7) return;
@@ -935,6 +956,7 @@ function lookupAddress() {
       if (j.results && j.results.length) {
         const r = j.results[0];
         document.getElementById('f_address').value = r.address1 + r.address2 + r.address3;
+        lookedUpArea = r.address1 + r.address2;   // エリア（都道府県＋市区町村）
         document.getElementById('f_banchi').focus();
       } else alert('住所が見つかりませんでした。郵便番号をご確認ください。');
     })
@@ -1005,6 +1027,7 @@ function validateForm() {
     }
   });
 
+  flagGroup('err_housing', !radioState.housing);
   flagGroup('err_payment', !radioState.payment);
   flagGroup('err_visit', !radioState.visit);
   flagGroup('err_pet', !radioState.pet);
@@ -1055,6 +1078,14 @@ function getPayload() {
     visitCount: radioState.visit === 'first' ? 'はじめて' : '2回目以上',
     cancelSlot: cancelSlotChecked ? '希望する' : '希望しない',
     note: v('f_note'),
+    // 予約管理シート用
+    area: lookedUpArea,
+    housingType: ({house:'戸建て', apartment:'マンション・アパート', other:'その他'})[radioState.housing] || '',
+    referralCode: v('f_referral'),
+    normalCount: totalCount - osoujiCount,
+    osoujiCount: osoujiCount,
+    optCounts: {boka: optQty.boka || 0, gaiki: optQty.gaiki || 0, dorain: optQty.dorain || 0, mushi: optQty.mushi || 0, woman: optQty.woman || 0, umekomi: optQty.umekomi || 0},
+    listTotal: getTotalAmount() + (totalCount >= 2 ? AC_MULTI_DISC : 0),   // 2台以上の割引を引く前の金額
     estimate: getTotalAmount(),
     submitted: new Date().toLocaleString('ja-JP')
   };
@@ -1088,6 +1119,7 @@ function submitByEmail(payload) {
     .then(res => {
       if (res && res.status === 'ok') {
         btn.disabled = false; btn.textContent = '📧 メールで予約リクエストを送信する';
+        payload.receiptNo = res.receiptNo || '';
         showComplete(payload);
       } else fail('送信に失敗しました。時間をおいて再度お試しいただくか、お電話（070-5080-7830）でご連絡ください。');
     })
@@ -1106,6 +1138,9 @@ function showComplete(d) {
   rows += row('第1希望', d.date1 + ' ' + d.time1) + row('第2希望', d.date2 + ' ' + d.time2) + row('第3希望', d.date3 + ' ' + d.time3);
   rows += row('お支払い', d.payment) + row('概算金額', yen(d.estimate));
   document.getElementById('completeSummary').innerHTML = rows;
+  // 受付番号（サーバーが振った番号）を表示
+  document.getElementById('receiptNo').textContent = d.receiptNo || '';
+  document.getElementById('receiptBox').style.display = d.receiptNo ? 'block' : 'none';
   goToPage(4);
 }
 
